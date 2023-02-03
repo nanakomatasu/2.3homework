@@ -388,7 +388,37 @@
     <script src="./lib/form-serialize.js"></script>
     <script src="./js/common.js"></script>
     <script>
-    
+      const modalBox = new bootstrap.Modal(document.querySelector("#modal"));
+      async function getStudents() {
+        const res = await axios({
+          method: "get",
+          url: "/students",
+        });
+        console.log(res.data);
+        document.querySelector(".list").innerHTML = res.data
+          .map((v) => {
+            return `
+                    <tr>
+                      <td>${v.name}</td>
+                      <td>${v.age}</td>
+                      <td>${v.gender === 0 ? "男" : "女"}</td>
+                      <td>${v.group}</td>
+                      <td>${v.hope_salary}</td>
+                      <td>${v.salary}</td>
+                      <td>${v.province} ${v.city} ${v.area}</td>
+                      <td>
+                        <a href="javascript:;" class="text-success mr-3"><i class="bi bi-pen" data-id="${
+                          v.id
+                        }"></i></a>
+                        <a href="javascript:;" class="text-danger"><i class="bi bi-trash" data-id="${
+                          v.id
+                        }"></i></a>
+                      </td>
+                    </tr>`;
+          })
+          .join("");
+      }
+      getStudents();
     </script>
   </body>
 </html>
