@@ -417,8 +417,22 @@
                     </tr>`;
           })
           .join("");
+        document.querySelector(".total").innerHTML = parseInt(res.data.length);
       }
       getStudents();
+      document.querySelector(".list").addEventListener("click", async (e) => {
+        const id = e.target.dataset.id;
+        console.log(id);
+        if (e.target.classList.contains("bi-trash")) {
+        } else if (e.target.classList.contains("bi-pen")) {
+          modalBox.show();
+          document.querySelector(".modal-title").innerHTML = "修改学员";
+        }
+      });
+      document.querySelector("#openModal").addEventListener("click", () => {
+        modalBox.show();
+        document.querySelector(".modal-title").innerHTML = "添加学员";
+      });
     </script>
   </body>
 </html>
