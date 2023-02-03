@@ -426,14 +426,45 @@
         } else if (e.target.classList.contains("bi-pen")) {
           modalBox.show();
           document.querySelector(".modal-title").innerHTML = "修改学员";
+          modalBox.id = id;
         }
       });
-      document.querySelector("#openModal").addEventListener("click", () => {
-        modalBox.show();
-        const data = 
-        document.querySelector(".modal-title").innerHTML = "添加学员";
+      document
+        .querySelector("#openModal")
+        .addEventListener("click", async () => {
+          modalBox.show();
+          document.querySelector("#form").reset();
+          await getCity();
+          await getArea();
+          const data = (document.querySelector(".modal-title").innerHTML =
+            "添加学员");
+          modalBox.id = "add";
+        });
+      //表单提交（添加 + 修改）
+      document.querySelector("#submit").addEventListener("click", async () => {
+        const data = serialize(document.querySelector("#form"), { hash: true });
+        for (const k in data) {
+          if (isNaN(data[k]) === false) {
+            data[k] = +data[k];
+          }
+        }
+        if (modalBox.id === "add") {
+          try {
+            const res = await axios({
+              method: "post",
+              url: "/students",
+              data,
+            });
+            alert("添加成功");
+            modalBox.hide();
+            rander();
+          } catch (err) {
+            console.log(err.response.data.message);
+          }
+          getStudents();
+        } else {
+        }
       });
-
       //获取省市区
       async function getProvince(province = "") {
         const { data } = await axios({
@@ -445,7 +476,6 @@
         const arr = data.map((e) => {
           return `<option value="${e}">${e}</option>`;
         });
-        console.log(arr);
         p.innerHTML = arr.join("");
         // province !== "" && (p.value = province);
       }
