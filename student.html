@@ -413,6 +413,16 @@
       document.querySelector(".list").addEventListener("click", async (e) => {
         const id = e.target.dataset.id;
         if (e.target.classList.contains("bi-trash")) {
+          try {
+            const res = await axios({
+              method: "delete",
+              url: `/students/${id}`,
+            });
+            alert("删除成功");
+            getStudents();
+          } catch (err) {
+            console.log(err);
+          }
         } else if (e.target.classList.contains("bi-pen")) {
           modalBox.show();
           document.querySelector(".modal-title").innerHTML = "修改学员";
