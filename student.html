@@ -427,6 +427,24 @@
           modalBox.show();
           document.querySelector(".modal-title").innerHTML = "修改学员";
           modalBox.id = id;
+          const { data } = await axios({
+            method: "get",
+            url: `/students/${id}`,
+          });
+          console.log(data);
+          for (const key in data) {
+            const input = document.querySelector(`[name=${key}]`);
+            if (key !== "gender") {
+              input !== null && (input.value = data[key]);
+            } else {
+              const genders = document.querySelectorAll("[name=gender]");
+              genders[data.gender].checked = true;
+            }
+          }
+          console.log(data);
+          await getProvince(data.province);
+          await getCity(data.city);
+          await getArea(data.area);
         }
       });
       document
@@ -457,12 +475,24 @@
             });
             alert("添加成功");
             modalBox.hide();
-            rander();
+            getStudents();
           } catch (err) {
             console.log(err.response.data.message);
           }
-          getStudents();
         } else {
+          const id = modalBox.id;
+          try {
+            const res = await axios({
+              method: "put",
+              url: `/students/${id}`,
+              data,
+            });
+            alert(res.message);
+            modalBox.hide();
+            getStudents();
+          } catch (err) {
+            console.log(err.response.data.message);
+          }
         }
       });
       //获取省市区
@@ -477,7 +507,7 @@
           return `<option value="${e}">${e}</option>`;
         });
         p.innerHTML = arr.join("");
-        // province !== "" && (p.value = province);
+        province !== "" && (p.value = province);
       }
       async function getCity(city = "") {
         const { data } = await axios({
@@ -491,6 +521,7 @@
           return `<option value="${v}">${v}</option>`;
         });
         c.innerHTML = arr.join("");
+        city !== "" && (c.value = city);
       }
       async function getArea(area = "") {
         const { data } = await axios({
@@ -505,6 +536,7 @@
           return `<option value="${i}">${i}</option>`;
         });
         a.innerHTML = arr.join("");
+        area !== "" && (a.value = area);
       }
 
       async function init() {
@@ -513,12 +545,12 @@
       init();
       //联动
       p.addEventListener("change", async () => {
-        await renderCity();
-        await renderArea();
+        await getCity();
+        await getArea();
       });
 
       c.addEventListener("change", async () => {
-        await renderArea();
+        await getArea();
       });
     </script>
   </body>
